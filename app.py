@@ -14,15 +14,21 @@ def getRainfall(table, stationid):
 
     print('Successful SEPA response...')
 
-    # dt = datetime.strptime(row[0],"%d/%m/%Y %H:%M:%S")
-    # timestamp = dt.strftime( '%Y-%m-%d %H:%M:%S')
-    # data = json.loads(json.dumps({
-    #             'monitoring-station-id': riverid,
-    #             'timestamp': timestamp,
-    #             'depth': round(float(row[1]), 2)}), parse_float=Decimal)
+    rainfall_data = r.json()
 
-    # # Add to dynamodb table put batch
-    # batch.put_item(Item=data)
+    with table.batch_writer(overwrite_by_pkeys=['monitoring-station-id', 'timestamp']) as batch:
+        for item in rainfall_data:
+            dt = datetime.strptime(item["Timestamp"],"%d/%m/%Y %H:%M:%S")
+            timestamp = dt.strftime( '%Y-%m-%d %H:%M:%S')
+            amount = item["Value"]
+
+            data = json.loads(json.dumps({
+                        'monitoring-station-id': stationid,
+                        'timestamp': timestamp,
+                        'amount': round(float(amount), 2)}), parse_float=Decimal)
+
+            # Add to dynamodb table put batch
+            batch.put_item(Item=data)
 
     print("Batch writing complete")
 
