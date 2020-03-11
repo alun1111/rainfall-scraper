@@ -6,15 +6,13 @@ from decimal import Decimal
 
 def getRainfall(table, stationid):
     # Get river levels csv
-    # r = requests.get(f'http://apps.sepa.org.uk/database/riverlevels/{riverid}.csv')
-    r = requests.get(f'https://www2.sepa.org.uk/waterlevels/CSVs/{riverid}.csv')
+    r = requests.get(f'https://www2.sepa.org.uk/rainfall/api/Hourly/{stationid}')
     print('SEPA response status: ' + str(r.status_code))
 
     if r.status_code != 200:
         return print(f'Bad SEPA response status: {str(r.status_code)}')
 
     print('Successful SEPA response...')
-
 
     # dt = datetime.strptime(row[0],"%d/%m/%Y %H:%M:%S")
     # timestamp = dt.strftime( '%Y-%m-%d %H:%M:%S')
